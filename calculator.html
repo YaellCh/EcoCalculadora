@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora - Huella Tecnológica</title>
+    
+    <link rel="stylesheet" href="eco_calculator.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+    <style>
+        /* Estilos específicos del formulario y la tabla de la calculadora */
+        
+        .calculator-title {
+            color: var(--azul-oscuro);
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .controls-card {
+            background-color: var(--blanco);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: var(--gris-texto);
+        }
+
+        .control-group input[type="number"],
+        .control-group select {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid var(--gris-medio);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        /* Contenedor de Botones de Acción */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto; 
+        }
+
+        .btn-action-small {
+            background-color: var(--azul-principal);
+            color: var(--blanco);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-action-small:hover {
+            background-color: var(--azul-secundario);
+        }
+        
+        .btn-green-generate {
+            background-color: var(--verde-ecologico); 
+        }
+
+        .btn-green-generate:hover {
+            background-color: #27ae60;
+        }
+        
+        /* Tabla de Dispositivos */
+        .devices-table-container {
+            background-color: var(--blanco);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+        }
+        
+        .devices-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .devices-table th,
+        .devices-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--gris-claro);
+            white-space: nowrap;
+        }
+
+        .devices-table thead th {
+            background-color: var(--gris-claro); /* Usando gris claro de la paleta original */
+            color: var(--azul-oscuro);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        /* Estilos de las celdas de resultado */
+        .devices-table .result-cell {
+            font-weight: bold;
+            color: var(--verde-ecologico);
+        }
+
+        /* Fila de totales */
+        .total-row td {
+            background-color: var(--gris-claro); /* Usando gris claro de la paleta original */
+            font-weight: bold;
+            border-top: 2px solid var(--azul-principal);
+            color: var(--azul-oscuro);
+        }
+        
+        .total-row .total-value {
+            color: var(--rojo-alerta);
+        }
+
+        /* Área de Instrucciones */
+        .instructions {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--gris-claro);
+        }
+        
+        .instructions h4 {
+            color: var(--azul-oscuro);
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--gris-texto);
+        }
+        
+        /* Estilo para inputs pequeños dentro de la tabla */
+        .devices-table .form-input-inline {
+            width: 80px; 
+            padding: 5px 8px;
+            border: 1px solid var(--gris-claro);
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        .devices-table .input-description {
+            width: 120px; 
+        }
+
+        .devices-table .form-input-inline:focus {
+            border-color: var(--azul-principal);
+            outline: none;
+        }
+        
+        /* Estilos para Resultados Visuales (Gráfica) */
+        .visual-results-section {
+            background-color: var(--gris-claro); /* Color de fondo suave */
+            padding: 40px 0;
+            border-top: 5px solid var(--verde-ecologico);
+            margin-top: 40px;
+        }
+
+        .visual-results-section h3 {
+            color: var(--azul-oscuro);
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .visual-results-section h4 {
+            color: var(--azul-oscuro);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .results-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .result-box {
+            background-color: var(--blanco);
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 250px;
+        }
+
+        .result-box h4 {
+            color: var(--gris-texto);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--verde-ecologico);
+        }
+
+        .result-box.total-co2 .result-value {
+            color: var(--naranja-advertencia); 
+        }
+
+        .chart-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--blanco);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Ajuste Responsive */
+        @media (max-width: 900px) {
+            .controls-card {
+                justify-content: center;
+            }
+            .action-buttons {
+                margin-left: 0;
+            }
+        }
+        @media (max-width: 600px) {
+            .results-grid {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="calculator-body">
+
+    <nav class="calculator-nav">
+        <ul class="nav-list">
+            <li><a href="eco_index.html">Inicio Ecológico</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+    </nav>
+    
+    <header class="calculator-header">
+        <h1>Calculadora de Huella Energética / CO₂</h1>
+        <p>Herramienta de estimación para equipos de red</p>
+    </header>
+
+    <main class="calculator-container">
+        
+        <h2 class="calculator-title">Calculadora de huella energética / CO₂</h2>
+
+        <div class="controls-card">
+            
+            <div class="control-group">
+                <label for="co2_factor">Factor CO₂ (kgCO₂ / kWh):</label>
+                <input type="number" id="co2_factor" value="0.43" step="0.01" class="form-input-inline">
+            </div>
+
+            <div class="control-group">
+                <label for="period_days">Días del periodo:</label>
+                <input type="number" id="period_days" value="30" class="form-input-inline">
+            </div>
+            
+            <div class="action-buttons">
+                <button type="button" class="btn-action-small">Agregar dispositivo</button>
+                <button type="button" class="btn-action-small">Agregar cable</button>
+                <button type="button" class="btn-action-small">Calcular</button>
+                <button type="button" class="btn-action-small btn-green-generate">Generar gráfica</button>
+            </div>
+        </div>
+        
+        <div class="devices-table-container">
+            <table class="devices-table">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Modelo / Descripción</th>
+                        <th>Cantidad</th>
+                        <th>Consumo (W) / Embodied CO₂ (kg)</th>
+                        <th>Horas al día</th>
+                        <th>Días / Notas</th>
+                        <th>kWh (periodo)</th>
+                        <th>CO₂ (kg, periodo)</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-type="device">
+                        <td>Router</td>
+                        <td><input type="text" value="Cisco 1941" class="input-description form-input-inline"></td>
+                        <td><input type="number" value="1" min="1" class="input-cantidad form-input-inline"></td>
+                        <td><input type="number" value="30" class="input-consumo form-input-inline"> W</td>
+                        <td><input type="number" value="24" class="input-horas form-input-inline"></td>
+                        <td><input type="text" value="30" class="input-dias form-input-inline"></td>
+                        <td class="result-cell kwh-result">0.00</td>
+                        <td class="result-cell co2-result">0.00</td>
+                        <td><button class="btn-action-small btn-remove">Eliminar</button></td>
+                    </tr>
+                    
+                    <tr data-type="cable">
+                        <td>Cable</td>
+                        <td><input type="text" value="UTP Cat 6 (100m)" class="input-description form-input-inline"></td>
+                        <td><input type="number" value="1" min="1" class="input-cantidad form-input-inline"></td>
+                        <td><input type="number" value="2" class="input-consumo form-input-inline"> kg</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td class="result-cell kwh-result">0.00</td>
+                        <td class="result-cell co2-result">0.00</td>
+                        <td><button class="btn-action-small btn-remove">Eliminar</button></td>
+                    </tr>
+                    
+                    <tr class="total-row">
+                        <td colspan="6" style="text-align: right;">Total kWh:</td>
+                        <td class="kwh-total total-value">0 kWh</td>
+                        <td colspan="2">Total CO₂: <span class="co2-total total-value">0 kg</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="instructions">
+            <h4>Instrucciones rápidas y Presets:</h4>
+            <ul>
+                <li>Los dispositivos usan <br>consumo en W</br> (watts). kWh = W x horas/día x días x cantidad / 1000.</li>
+                <li>Para cables puedes elegir que tengan <br>CO₂ incorporado (embodied carbon)</br> por unidad en kg — si no aplica, deja 0.</li>
+                <li>Los <br>presets</br> están marcados y son estimaciones. Cámbialos por valores reales si los conoces.</li>
+            </ul>
+            <p>Presets incluidos (estimados, editables): <br>Cisco 1941 (router)</br> ~ 30 W; <br>Cisco 2911 (router)</br> ~ 70 W; <br>PC de escritorio</br> ~ 100 W; <br>Laptop</br> ~ 30 W; <br>Switch (small)</br> ~ 30 W; <br>Antena (outdoor)</br> ~ 20 W; <br>Celular (cargando)</br> ~ 5 W. Ajusta según tu marca/modelo.</p>
+        </div>
+
+    </main>
+    
+    <section id="visual-results" class="visual-results-section" style="display: none;">
+        <div class="calculator-container">
+            <h3>Resultados Visuales y Distribución de Impacto</h3>
+            
+            <div class="results-grid">
+                <div class="result-box total-kwh">
+                    <h4>Consumo Total (kWh)</h4>
+                    <span id="kwh-visual-output" class="result-value">0.00</span>
+                </div>
+                <div class="result-box total-co2">
+                    <h4>Emisiones Total (kg CO₂)</h4>
+                    <span id="co2-visual-output" class="result-value">0.00</span>
+                </div>
+            </div>
+
+            <div class="graph-placeholder">
+                <h4>Distribución de CO₂ por Dispositivo</h4>
+                <div class="chart-container">
+                    <canvas id="resultsChart"></canvas> 
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <footer class="calculator-footer">
+        <p>&copy; 2025 Centro Cultural Tlahuelilpan. Proyecto de Sostenibilidad Tecnológica.</p>
+    </footer>
+
+    <script src="calculator.js"></script> 
+</body>
+</html>
