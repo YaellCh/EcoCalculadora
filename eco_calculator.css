@@ -55,7 +55,7 @@ body.calculator-body {
     color: #e0e0e0;
 }
 
-/* Navegación (simple para la calculadora) */
+/* Navegación (actualizada con texto más grande) */
 .calculator-nav {
     background-color: var(--blanco);
     border-bottom: 1px solid var(--gris-claro);
@@ -66,22 +66,25 @@ body.calculator-body {
     display: flex;
     justify-content: flex-end;
     list-style: none;
-    padding: 10px 0;
+    padding: 15px 0;
     margin: 0 auto;
     max-width: 1200px;
-    padding: 0 20px;
+    padding: 15px 20px;
 }
 
 .calculator-nav .nav-list a {
     color: var(--azul-oscuro);
     text-decoration: none;
-    padding: 10px 15px;
-    font-weight: 600;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 1.1rem; /* Aumentado de 1rem */
     transition: color 0.2s, background-color 0.2s;
+    border-radius: 5px;
 }
 
 .calculator-nav .nav-list a:hover {
     color: var(--azul-principal);
+    background-color: var(--gris-claro);
 }
 
 /* ======================================= */
@@ -189,15 +192,17 @@ body.calculator-body {
         justify-content: center;
     }
     .calculator-nav .nav-list a {
-        padding: 8px 10px;
+        padding: 10px 15px;
+        font-size: 1rem;
     }
 }
+
 /* ======================================= */
 /* 4.0 ESTILOS DE RESULTADOS VISUALES      */
 /* ======================================= */
 
 .visual-results-section {
-    background-color: var(--azul-claro);
+    background-color: var(--gris-claro);
     padding: 40px 0;
     border-top: 5px solid var(--verde-ecologico);
 }

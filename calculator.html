@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora - Huella Tecnológica</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+    
     <link rel="stylesheet" href="eco_calculator.css"> 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 
@@ -100,7 +103,7 @@
         }
 
         .devices-table thead th {
-            background-color: var(--gris-claro); /* Usando gris claro de la paleta original */
+            background-color: var(--gris-claro);
             color: var(--azul-oscuro);
             font-weight: bold;
             text-transform: uppercase;
@@ -115,7 +118,7 @@
 
         /* Fila de totales */
         .total-row td {
-            background-color: var(--gris-claro); /* Usando gris claro de la paleta original */
+            background-color: var(--gris-claro);
             font-weight: bold;
             border-top: 2px solid var(--azul-principal);
             color: var(--azul-oscuro);
@@ -155,6 +158,10 @@
         .devices-table .input-description {
             width: 120px; 
         }
+        
+        .devices-table select.form-input-inline {
+            width: 120px;
+        }
 
         .devices-table .form-input-inline:focus {
             border-color: var(--azul-principal);
@@ -163,7 +170,7 @@
         
         /* Estilos para Resultados Visuales (Gráfica) */
         .visual-results-section {
-            background-color: var(--gris-claro); /* Color de fondo suave */
+            background-color: var(--gris-claro);
             padding: 40px 0;
             border-top: 5px solid var(--verde-ecologico);
             margin-top: 40px;
@@ -215,9 +222,69 @@
             color: var(--naranja-advertencia); 
         }
 
+        /* Métrica de evaluación */
+        .impact-metric {
+            background-color: var(--blanco);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--verde-ecologico);
+        }
+
+        .impact-metric.warning {
+            border-left-color: var(--naranja-advertencia);
+        }
+
+        .impact-metric.danger {
+            border-left-color: var(--rojo-alerta);
+        }
+
+        .impact-metric h4 {
+            color: var(--azul-oscuro);
+            margin-bottom: 10px;
+        }
+
+        .impact-metric .metric-status {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .impact-metric.good .metric-status {
+            color: var(--verde-ecologico);
+        }
+
+        .impact-metric.warning .metric-status {
+            color: var(--naranja-advertencia);
+        }
+
+        .impact-metric.danger .metric-status {
+            color: var(--rojo-alerta);
+        }
+
         .chart-container {
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 1000px;
+            margin: 0 auto 30px;
+            padding: 20px;
+            background-color: var(--blanco);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .charts-row {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .chart-container-small {
+            flex: 1;
+            min-width: 400px;
+            max-width: 500px;
             padding: 20px;
             background-color: var(--blanco);
             border-radius: 8px;
@@ -232,11 +299,17 @@
             .action-buttons {
                 margin-left: 0;
             }
+            .chart-container-small {
+                min-width: 300px;
+            }
         }
         @media (max-width: 600px) {
             .results-grid {
                 flex-direction: column;
                 gap: 20px;
+            }
+            .chart-container-small {
+                min-width: 100%;
             }
         }
     </style>
@@ -245,7 +318,7 @@
 
     <nav class="calculator-nav">
         <ul class="nav-list">
-            <li><a href="index.html">Inicio Ecológico</a></li>
+            <li><a href="index.html">Inicio</a></li>
             <li><a href="contacto.html">Contacto</a></li>
         </ul>
     </nav>
@@ -263,19 +336,18 @@
             
             <div class="control-group">
                 <label for="co2_factor">Factor CO₂ (kgCO₂ / kWh):</label>
-                <input type="number" id="co2_factor" value="0.43" step="0.01" class="form-input-inline">
+                <input type="number" id="co2_factor" value="0.43" step="0.01" min="0" class="form-input-inline">
             </div>
 
             <div class="control-group">
                 <label for="period_days">Días del periodo:</label>
-                <input type="number" id="period_days" value="30" class="form-input-inline">
+                <input type="number" id="period_days" value="30" min="1" class="form-input-inline">
             </div>
             
             <div class="action-buttons">
-                <button type="button" class="btn-action-small">Agregar dispositivo</button>
-                <button type="button" class="btn-action-small">Agregar cable</button>
-                <button type="button" class="btn-action-small">Calcular</button>
-                <button type="button" class="btn-action-small btn-green-generate">Generar gráfica</button>
+                <button type="button" class="btn-action-small" id="btn-add-device">Agregar dispositivo</button>
+                <button type="button" class="btn-action-small" id="btn-calculate">Calcular</button>
+                <button type="button" class="btn-action-small btn-green-generate" id="btn-generate-graph">Generar gráfica</button>
             </div>
         </div>
         
@@ -288,7 +360,7 @@
                         <th>Cantidad</th>
                         <th>Consumo (W) / Embodied CO₂ (kg)</th>
                         <th>Horas al día</th>
-                        <th>Días / Notas</th>
+                        <th>Días del periodo</th>
                         <th>kWh (periodo)</th>
                         <th>CO₂ (kg, periodo)</th>
                         <th>Acción</th>
@@ -296,24 +368,22 @@
                 </thead>
                 <tbody>
                     <tr data-type="device">
-                        <td>Router</td>
+                        <td>
+                            <select class="device-type-select form-input-inline">
+                                <option value="router">Router</option>
+                                <option value="switch">Switch</option>
+                                <option value="computadora">Computadora</option>
+                                <option value="hub">Hub</option>
+                                <option value="antena">Antena</option>
+                                <option value="cable">Cable</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </td>
                         <td><input type="text" value="Cisco 1941" class="input-description form-input-inline"></td>
                         <td><input type="number" value="1" min="1" class="input-cantidad form-input-inline"></td>
-                        <td><input type="number" value="30" class="input-consumo form-input-inline"> W</td>
-                        <td><input type="number" value="24" class="input-horas form-input-inline"></td>
-                        <td><input type="text" value="30" class="input-dias form-input-inline"></td>
-                        <td class="result-cell kwh-result">0.00</td>
-                        <td class="result-cell co2-result">0.00</td>
-                        <td><button class="btn-action-small btn-remove">Eliminar</button></td>
-                    </tr>
-                    
-                    <tr data-type="cable">
-                        <td>Cable</td>
-                        <td><input type="text" value="UTP Cat 6 (100m)" class="input-description form-input-inline"></td>
-                        <td><input type="number" value="1" min="1" class="input-cantidad form-input-inline"></td>
-                        <td><input type="number" value="2" class="input-consumo form-input-inline"> kg</td>
-                        <td>N/A</td>
-                        <td>N/A</td>
+                        <td><input type="number" value="30" min="0" class="input-consumo form-input-inline"> <span class="unit-label">W</span></td>
+                        <td><input type="number" value="24" min="0" max="24" class="input-horas form-input-inline"></td>
+                        <td><input type="number" value="30" min="1" class="input-dias form-input-inline"></td>
                         <td class="result-cell kwh-result">0.00</td>
                         <td class="result-cell co2-result">0.00</td>
                         <td><button class="btn-action-small btn-remove">Eliminar</button></td>
@@ -331,11 +401,11 @@
         <div class="instructions">
             <h4>Instrucciones rápidas y Presets:</h4>
             <ul>
-                <li>Los dispositivos usan <br>consumo en W</br> (watts). kWh = W x horas/día x días x cantidad / 1000.</li>
-                <li>Para cables puedes elegir que tengan <br>CO₂ incorporado (embodied carbon)</br> por unidad en kg — si no aplica, deja 0.</li>
-                <li>Los <br>presets</br> están marcados y son estimaciones. Cámbialos por valores reales si los conoces.</li>
+                <li>Los dispositivos usan <strong>consumo en W</strong> (watts). kWh = W x horas/día x días x cantidad / 1000.</li>
+                <li>Para cables puedes ingresar <strong>CO₂ incorporado (embodied carbon)</strong> por unidad en kg – si no aplica, deja 0.</li>
+                <li>Los <strong>presets</strong> están marcados y son estimaciones. Cámbialo por valores reales si los conoces.</li>
             </ul>
-            <p>Presets incluidos (estimados, editables): <br>Cisco 1941 (router)</br> ~ 30 W; <br>Cisco 2911 (router)</br> ~ 70 W; <br>PC de escritorio</br> ~ 100 W; <br>Laptop</br> ~ 30 W; <br>Switch (small)</br> ~ 30 W; <br>Antena (outdoor)</br> ~ 20 W; <br>Celular (cargando)</br> ~ 5 W. Ajusta según tu marca/modelo.</p>
+            <p>Presets incluidos (estimados, editables): <strong>Cisco 1941 (router)</strong> ~ 30 W; <strong>Cisco 2911 (router)</strong> ~ 70 W; <strong>PC de escritorio</strong> ~ 100 W; <strong>Laptop</strong> ~ 30 W; <strong>Switch (small)</strong> ~ 30 W; <strong>Antena (outdoor)</strong> ~ 20 W; <strong>Celular (cargando)</strong> ~ 5 W. Ajusta según tu marca/modelo.</p>
         </div>
 
     </main>
@@ -355,10 +425,31 @@
                 </div>
             </div>
 
+            <!-- Métrica de Evaluación -->
+            <div id="impact-metric" class="impact-metric good">
+                <h4>Evaluación de Impacto Ambiental</h4>
+                <div class="metric-status" id="metric-status-text">✓ Excelente</div>
+                <p id="metric-description">Tu huella tecnológica es baja. ¡Sigue así!</p>
+            </div>
+
+            <!-- Gráfica de Pareto -->
             <div class="graph-placeholder">
-                <h4>Distribución de CO₂ por Dispositivo</h4>
+                <h4>Gráfico de Pareto - kWh por Dispositivo</h4>
                 <div class="chart-container">
-                    <canvas id="resultsChart"></canvas> 
+                    <canvas id="paretoChart"></canvas> 
+                </div>
+            </div>
+            
+            <!-- Polígono de frecuencias y Gráfico Circular -->
+            <div class="charts-row">
+                <div class="chart-container-small">
+                    <h4>Polígono de Frecuencias</h4>
+                    <canvas id="frequencyChart"></canvas>
+                </div>
+                
+                <div class="chart-container-small">
+                    <h4>Distribución Circular de CO₂</h4>
+                    <canvas id="pieChart"></canvas>
                 </div>
             </div>
             
